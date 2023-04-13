@@ -1,0 +1,33 @@
+/** Database setup for BizTime. */
+
+// const { Client } = require('pg');
+
+// let DB_URI;
+
+// // If we're running in test "mode", use our test db
+// // below creates two differnt databases
+// if(process.env.NODE_ENV === 'test') {
+//     DB_URI = 'postgresql:///biztime_test';
+// } else {
+//     DB_URI = 'postgresql:///biztime';
+// }
+
+// let db = new Client({
+//     connectionString: DB_URI
+// });
+
+// // starts connection
+// db.connect();
+
+// module.exports = db;
+
+
+const { Client } = require('pg');
+
+const client = new Client({
+    connectionString: "postgresql:///biztime"
+});
+
+client.connect();
+
+module.exports = client;
