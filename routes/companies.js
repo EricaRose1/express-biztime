@@ -1,7 +1,8 @@
 // Routes for Companies
 
-const express = require('express')
-const ExpressError = require('../expressError')
+const express = require('express');
+const slugify = require("slugify");
+const ExpressError = require('../expressError');
 const db = require('../db');
 
 const router = new express.Router();
@@ -22,8 +23,17 @@ router.get('/:code', async function (req, res, next) {
     try {
         let { code } = req.params;
 
-        const companiesResult = await db.query(`SELECT code, name, description FROM companies WHERE code = $1`, [code]);
-        const invoiceResult = await db.query(`SELECT id FROM invoices WHERE comp_code = $1`, [code]);
+        const companiesResult = await db.query(
+            `SELECT code, name, description 
+             FROM companies 
+             WHERE code = $1`, 
+             [code]);
+
+        const invoiceResult = await db.query(
+            `SELECT id 
+             FROM invoices 
+             WHERE comp_code = $1`, 
+             [code]);
 
         if(companiesResult.rows.length === 0) {
             throw new ExpressError('No company with code: ${code}', 404)
@@ -68,9 +78,9 @@ router.put("/:code", async function (req, res, next) {
 
         const result = await db.query(
             `UPDATE companies
-            SET name=$1, description=$2
-            WHERE code = $3
-            RETURNING code, name, description`, 
+             SET name=$1, description=$2
+             WHERE code = $3
+             RETURNING code, name, description`, 
             [name, description, code]);
         
         if (result.rows.length === 0) {
@@ -89,7 +99,9 @@ router.put("/:code", async function (req, res, next) {
 router.delete('/:code', async (req, res, next) => {
     try {
       const results = db.query(
-        'DELETE FROM companies WHERE code = $1 RETURNING code', 
+        `DELETE FROM companies
+         WHERE code = $1 
+         RETURNING code`, 
         [code]);
 
       if (result.rows.length == 0) {
